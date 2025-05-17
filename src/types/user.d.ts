@@ -1,5 +1,8 @@
 export type User = {
   username: string;
   email: string;
-  password: number;
+  password: string;
+  user_id?: 1;
+  salt?: string;
+  createdAt?: string;
 };
