@@ -7,6 +7,11 @@ const blogSchema = {
       description: joi.string().required(),
     })
     .required(),
+  id: joi
+    .object({
+      id: joi.number().required(),
+    })
+    .required(),
 };
 
 export default blogSchema;
