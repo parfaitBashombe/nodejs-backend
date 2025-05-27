@@ -19,6 +19,36 @@ class BlogControllers {
     }
   }
 
+  static async getAllPostsOneUser(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const result = await BlogServices.getAllPostsOneUser(parseInt(id));
+
+      if (!result) {
+        return responseHandler(res, 400, "Bad Request");
+      }
+
+      return responseHandler(res, 200, "success", result);
+    } catch (error) {
+      return responseHandler(res, 500, "Server Error");
+    }
+  }
+
+  static async getSinglePost(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const result = await BlogServices.getPostById(parseInt(id));
+
+      if (!result) {
+        return responseHandler(res, 400, "Bad Request");
+      }
+
+      return responseHandler(res, 200, "success", result);
+    } catch (error) {
+      return responseHandler(res, 500, "Server Error");
+    }
+  }
+
   static async createPost(req: Request | any, res: Response) {
     try {
       const data: Post = req.body;
@@ -40,16 +70,32 @@ class BlogControllers {
     }
   }
 
-  static async updatePost(req: Request, res: Response) {
+  static async updatePost(req: Request | any, res: Response) {
     try {
       const data: Post = req.body;
-      const { id } = req.params;
 
-      const result = await BlogServices.updatePost(parseInt(id), data);
+      const user: User = req.currentUser;
 
-      return responseHandler(res, 200, "Post updated");
+      const post_id = req.params.id;
+
+      const post = await BlogServices.getPostById(post_id);
+
+      if (!post) {
+        return responseHandler(res, 400, "Bad request");
+      }
+
+      if (user.user_id !== post.user_id) {
+        return responseHandler(
+          res,
+          400,
+          "This post belongs to someone else, you cannot update it."
+        );
+      }
+      const result = await BlogServices.updatePost(post_id as number, data);
+
+      return responseHandler(res, 200, "Post was updated");
     } catch (error: any) {
-      console.error("Update post error:", error.message || error);
+      console.error("update post error:", error.message || error);
       return responseHandler(res, 500, "Server Error");
     }
   }

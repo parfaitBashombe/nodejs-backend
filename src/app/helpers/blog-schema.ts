@@ -7,6 +7,12 @@ const blogSchema = {
       description: joi.string().required(),
     })
     .required(),
+  updateBlog: joi
+    .object({
+      title: joi.string().required(),
+      description: joi.string().required(),
+    })
+    .required(),
   id: joi
     .object({
       id: joi.number().required(),

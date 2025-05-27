@@ -9,6 +9,12 @@ class BlogServices {
     return rows;
   }
 
+  static async getAllPostsOneUser(id: number) {
+    const [rows] = await db.query(`SELECT * FROM posts WHERE user_id = ${id}`);
+    if (!rows) return null;
+    return rows;
+  }
+
   static async getPostById(id: number): Promise<Post | null> {
     const [rows] = await db.query<RowDataPacket[]>(
       `SELECT * FROM posts WHERE post_id = ?`,
@@ -34,9 +40,13 @@ class BlogServices {
         `UPDATE posts SET title = ?, description = ? WHERE post_id = ?`,
         [data.title, data.description, id]
       );
+
+      if (!result) {
+        return null;
+      }
       return result;
     } catch (error) {
-      console.error("Update post failed:", error);
+      console.error("Update failed:", error);
       throw error;
     }
   }

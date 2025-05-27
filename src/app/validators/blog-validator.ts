@@ -22,6 +22,16 @@ class BlogValidator {
 
     return next();
   }
+
+  static async updatePost(req: Request, res: Response, next: NextFunction) {
+    const value = await blogSchema.updateBlog.validate(req.body);
+
+    if (value.error) {
+      return responseHandler(res, 400, value.error.message.replaceAll('"', ""));
+    }
+
+    return next();
+  }
 }
 
 export default BlogValidator;
