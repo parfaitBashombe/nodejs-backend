@@ -1,12 +1,12 @@
-import { RowDataPacket } from "mysql2";
+
 import { Login, User } from "../../types/user";
 import { db } from "../config/db-config";
 import Password from "../../common/utils/password-utils";
 
 class UserServices {
   static async getOneUserByEmail(email: string): Promise<User | null> {
-    const [rows] = await db.query<RowDataPacket[]>(
-      `SELECT * FROM users WHERE email = ?`,
+    const { rows } = await db.query(
+      `SELECT * FROM users WHERE email = $1`,
       [email]
     );
     return rows[0] as User;
@@ -17,7 +17,7 @@ class UserServices {
     const password = Password.hash(data.password, salt);
 
     const result = await db.query(
-      `INSERT INTO users (name, email,salt , password, createdAt) VALUES (?, ?,?, ?, CURRENT_TIMESTAMP)`,
+      `INSERT INTO users (name, email,salt , password, createdAt) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)`,
       [data.name, data.email, salt, password]
     );
 
@@ -42,13 +42,13 @@ class UserServices {
     }
   }
 
-  static async updateUser(id: number, data: User) {
+  static async updateUser(id: string, data: User) {
     try {
       const salt = Password.salt();
       const password = Password.hash(data.password, salt);
 
       const result = await db.query(
-        `UPDATE users SET name = ?, email = ?,salt = ?, password = ? WHERE user_id = ?`,
+        `UPDATE users SET name = $1, email = $2,salt = $3, password = $4 WHERE user_id = $5`,
         [data.name, data.email, salt, password, id]
       );
 

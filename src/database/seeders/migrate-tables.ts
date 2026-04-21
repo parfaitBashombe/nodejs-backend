@@ -4,6 +4,9 @@ import { users } from "../models/users";
 
 const createTables = async () => {
   try {
+    await db.query(`DROP TABLE IF EXISTS posts`);
+    await db.query(`DROP TABLE IF EXISTS users`);
+
     await db.query(users);
 
     await db.query(posts);

@@ -1,23 +1,23 @@
-import { RowDataPacket } from "mysql2";
+
 import { Post } from "../../types/post";
 import { db } from "../config/db-config";
 
 class BlogServices {
   static async getAllPosts() {
-    const [rows] = await db.query(`SELECT * FROM posts`);
+    const { rows } = await db.query(`SELECT * FROM posts`);
     if (!rows) return null;
     return rows;
   }
 
-  static async getAllPostsOneUser(id: number) {
-    const [rows] = await db.query(`SELECT * FROM posts WHERE user_id = ${id}`);
+  static async getAllPostsOneUser(id: string) {
+    const { rows } = await db.query(`SELECT * FROM posts WHERE user_id = $1`, [id]);
     if (!rows) return null;
     return rows;
   }
 
-  static async getPostById(id: number): Promise<Post | null> {
-    const [rows] = await db.query<RowDataPacket[]>(
-      `SELECT * FROM posts WHERE post_id = ?`,
+  static async getPostById(id: string): Promise<Post | null> {
+    const { rows } = await db.query(
+      `SELECT * FROM posts WHERE post_id = $1`,
       [id]
     );
     return rows[0] as Post;
@@ -25,7 +25,7 @@ class BlogServices {
 
   static async createPost(data: Post) {
     const result = await db.query(
-      `INSERT INTO posts (user_id, title, description, createdAt) VALUES (?, ?, ?, CURRENT_TIMESTAMP)`,
+      `INSERT INTO posts (user_id, title, description, createdAt) VALUES ($1, $2, $3, CURRENT_TIMESTAMP)`,
       [data.user_id, data.title, data.description]
     );
 
@@ -34,10 +34,10 @@ class BlogServices {
     return result;
   }
 
-  static async updatePost(id: number, data: Post) {
+  static async updatePost(id: string, data: Post) {
     try {
       const result = await db.query(
-        `UPDATE posts SET title = ?, description = ? WHERE post_id = ?`,
+        `UPDATE posts SET title = $1, description = $2 WHERE post_id = $3`,
         [data.title, data.description, id]
       );
 
@@ -51,9 +51,9 @@ class BlogServices {
     }
   }
 
-  static async deletePost(id: number) {
+  static async deletePost(id: string) {
     try {
-      const result = await db.query(`DELETE FROM posts WHERE post_id = ?`, [
+      const result = await db.query(`DELETE FROM posts WHERE post_id = $1`, [
         id,
       ]);
       return result;
