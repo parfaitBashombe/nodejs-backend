@@ -1,25 +1,12 @@
-import mysql from "mysql2/promise";
-import dotenv from "dotenv";
-
-dotenv.config();
-
-const { DB_USER_DEV, DB_PASSWORD_DEV, DB_HOST_DEV, DB_PORT_DEV } = process.env;
+import { db } from "./db-config";
 
 export const createDatabase = async (): Promise<void> => {
   try {
-    const connection = await mysql.createConnection({
-      host: DB_HOST_DEV,
-      user: DB_USER_DEV,
-      password: DB_PASSWORD_DEV,
-      port: parseInt(DB_PORT_DEV as string),
-    });
-
-    await connection.query(`CREATE DATABASE IF NOT EXISTS blog`);
-
-    console.log("Database 'blog' created or already exists.");
-
-    await connection.end();
+    // With Neon Postgres, the DB URL already points to an existing database.
+    // We just test the connection here.
+    await db.query(`SELECT 1`);
+    console.log("Successfully connected to the database.");
   } catch (error) {
-    console.error("CREATE DATABASE ERROR:", error);
+    console.error("DATABASE CONNECTION ERROR:", error);
   }
 };

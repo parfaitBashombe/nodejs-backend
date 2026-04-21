@@ -22,7 +22,7 @@ class BlogControllers {
   static async getAllPostsOneUser(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const result = await BlogServices.getAllPostsOneUser(parseInt(id));
+      const result = await BlogServices.getAllPostsOneUser(id);
 
       if (!result) {
         return responseHandler(res, 400, "Bad Request");
@@ -37,7 +37,7 @@ class BlogControllers {
   static async getSinglePost(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const result = await BlogServices.getPostById(parseInt(id));
+      const result = await BlogServices.getPostById(id);
 
       if (!result) {
         return responseHandler(res, 400, "Bad Request");
@@ -56,7 +56,7 @@ class BlogControllers {
 
       const result = await BlogServices.createPost({
         ...data,
-        user_id: user.user_id as number,
+        user_id: user.user_id as string,
       });
 
       if (!result) {
@@ -91,7 +91,7 @@ class BlogControllers {
           "This post belongs to someone else, you cannot update it."
         );
       }
-      const result = await BlogServices.updatePost(post_id as number, data);
+      const result = await BlogServices.updatePost(post_id as string, data);
 
       return responseHandler(res, 200, "Post was updated");
     } catch (error: any) {
@@ -117,7 +117,7 @@ class BlogControllers {
       if (user.user_id !== post.user_id) {
         return responseHandler(res, 400, "This post belongs to someone else");
       }
-      const result = await BlogServices.deletePost(post_id as number);
+      const result = await BlogServices.deletePost(post_id as string);
 
       return responseHandler(res, 200, "Post was deleted");
     } catch (error: any) {

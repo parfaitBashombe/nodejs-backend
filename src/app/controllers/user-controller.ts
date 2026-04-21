@@ -56,7 +56,7 @@ class UserControllers {
       const user: User = req.currentUser;
 
       const result = await UserServices.updateUser(
-        user.user_id as number,
+        user.user_id as string,
         data
       );
 
