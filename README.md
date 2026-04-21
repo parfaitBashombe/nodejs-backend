@@ -61,3 +61,37 @@ The server will start listening on the port defined in your `.env` file (e.g., `
 - **Blog Posts CRUD**: Authenticated users can create, read, update, and delete their own blog posts.
 - **Relational Data**: Posts are linked to users via a foreign key (`user_id`). Deleting a user automatically cascades and deletes their posts.
 - **UUID Primary Keys**: Secure, globally unique identifiers for database records.
+
+## 🧪 API Testing Guide
+
+You can test the API using tools like [Postman](https://www.postman.com/), [Insomnia](https://insomnia.rest/), or cURL. The base URL when running locally is `http://localhost:4001/api`.
+
+### 1. Authentication
+
+- **Sign Up**: `POST /api/auth/signup`
+  - **Body (JSON)**: `{ "name": "Test User", "email": "test@example.com", "password": "password123" }`
+- **Sign In**: `POST /api/auth/signin`
+  - **Body (JSON)**: `{ "email": "test@example.com", "password": "password123" }`
+  - _Note: A successful login will return a JWT `token`. You must include this token in the `Authorization` header (e.g., `Bearer <your_token_here>`) for any protected routes._
+
+### 2. Users (Protected)
+
+- **Update User Profile**: `PUT /api/users`
+  - **Headers**: `Authorization: Bearer <token>`
+  - **Body (JSON)**: `{ "name": "Updated Name", "email": "updated@example.com", "password": "newpassword123" }`
+
+### 3. Blog Posts
+
+**Public Routes:**
+
+- **Get All Posts**: `GET /api/post`
+- **Get Posts by User**: `GET /api/post/user/<user_uuid>`
+- **Get Single Post**: `GET /api/post/<post_uuid>`
+
+**Protected Routes (Require Header: `Authorization: Bearer <token>`):**
+
+- **Create Post**: `POST /api/post`
+  - **Body (JSON)**: `{ "title": "My First Post", "description": "This is the content." }`
+- **Update Post**: `PUT /api/post/<post_uuid>`
+  - **Body (JSON)**: `{ "title": "Updated Title", "description": "Updated content." }`
+- **Delete Post**: `DELETE /api/post/<post_uuid>`
